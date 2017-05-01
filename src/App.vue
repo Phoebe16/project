@@ -14,7 +14,8 @@
     </div>  
     <!-- 路由出口 -->
     <!-- 路由匹配到的组件将渲染在这里 -->
-    <router-view></router-view>
+    <!-- 传递seller，这样在goods组件可以获得seller，才可以再传给shopcart -->
+    <router-view :seller="seller"></router-view>
   </div>
 </template>
 
