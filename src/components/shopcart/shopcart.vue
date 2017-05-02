@@ -16,7 +16,7 @@
                     令需配送费￥{{deliveryPrice}}元
                     </div>
                 </div>
-                <div class="content-right">
+                <div class="content-right" @click.stop.prevent="pay">
                     <div class="pay" :class="payClass">
                         {{payDesc}}
                     </div>
@@ -52,7 +52,7 @@
             </transition>
         </div>
         <transition name="fade">
-            <div class="list-mask" v-show="listShow"></div>
+            <div class="list-mask" @click="hideList" v-show="listShow"></div>
         </transition>
     </div>
     
@@ -164,10 +164,19 @@
                 }
                 this.fold = !this.fold;
             },
+            hideList() {
+                this.fold = true;
+            },
             empty() {
                 this.selectFoods.forEach((food) => {
                     food.count = 0;
                 });
+            },
+            pay() {
+                if (this.totalPrice < this.minPrice) {
+                    return;
+                }
+                window.alert(`支付${this.totalPrice}元`);
             }
         },
         components: {
@@ -283,17 +292,19 @@
                     border-radius: 50%
                     background: rgb(0, 160, 220)
                     transition: all 0.4s
-        .fold-enter-active, .fold-leave    
-            transform: translate3D(0, -100%, 0)
+        .fold-enter-active, .fold-leave
+            
+            transition: all 1.5s
         .fold-enter, .fold-leave-active
-            transform: translate3D(0, 0, 0)
+            transform: translate3d(0, 0, 0)
         .shopcart-list
             position: absolute
             top: 0
             left: 0
             z-index: -1
             width: 100%
-            transition: all 1.5s
+            transform: translate3d(0, -100%, 0)
+            
             .list-header
                 height: 40px
                 line-height: 40px
@@ -335,9 +346,9 @@
                         right: 0
                         bottom: 6px
     
-    .fade-enter-active
-        opacity: 1
-        background: rgba(7,17,27,0.6)
+    .fade-enter-active, .fade-leave
+        
+        transition: all 1.5s
     .fade-enter, .fade-leave-active
         opacity: 0
         background: rgba(7,17,27,0)
@@ -348,4 +359,7 @@
         width: 100%
         height: 100%
         z-index: 40
+        backdrop-filter: blur(10px)
+        opacity: 1
+        background: rgba(7,17,27,0.6)
 </style>
