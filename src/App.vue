@@ -15,26 +15,38 @@
     <!-- 路由出口 -->
     <!-- 路由匹配到的组件将渲染在这里 -->
     <!-- 传递seller，这样在goods组件可以获得seller，才可以再传给shopcart -->
-    <router-view :seller="seller"></router-view>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import header from './components/header/header';
+  import {urlParse} from './common/js/util';
 
   const ERR_OK = 0;
 
   export default{
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller').then((response) => {
+      this.$http.get('/api/seller?id=' + this.seller.id).then((response) => {
         response = response.body;  // .json()返回Promise对象，.body返回Object对象
         if (response.errno === ERR_OK) {
-          this.seller = response.data;
+          // this.seller = response.data;
+          // console.log(this.seller.id);  // 此时是undefined
+          this.seller = Object.assign({}, this.seller, response.data);
+          // 给对象扩展属性的方法
+          console.log(this.seller.id);
         }
       });
     },
